@@ -38,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void click(View view) {
         String text = editText.getText().toString();
+
+        if(text.equals(""))
+            text = "Name";
+
         text += " Order: " + drink;
         textView.setText(text);
 
