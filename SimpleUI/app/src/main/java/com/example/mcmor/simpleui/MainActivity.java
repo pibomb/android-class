@@ -1,19 +1,22 @@
 package com.example.mcmor.simpleui;
 
-import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioGroup;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     String drink = "Black Tea";
 
-    List<String> data = new ArrayList<String>();
+    List<Order> data = new ArrayList<Order>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +44,19 @@ public class MainActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.blackTeaRadioButton) {
+                if (checkedId == R.id.blackTeaRadioButton) {
                     drink = "Black Tea";
-                } else if(checkedId == R.id.greenTeaRadioButton) {
+                } else if (checkedId == R.id.greenTeaRadioButton) {
                     drink = "Green Tea";
                 }
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Order order = (Order) parent.getAdapter().getItem(position);
+                Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -56,7 +67,26 @@ public class MainActivity extends AppCompatActivity {
     private void setupListView() {
 //        String[] data = new String[] {"1", "2", "3", "4", "5", "6", "7", "8"};
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+//        List<Map<String, String>> mapList = new ArrayList<>();
+//
+//        for(Order order : data) {
+//            Map<String, String> item = new HashMap<>();
+//
+//            item.put("note", order.note);
+//            item.put("storeInfo", order.storeInfo);
+//            item.put("drink", order.drink);
+//
+//            mapList.add(item);
+//        }
+//
+//        String[] from = {"note", "storeInfo", "drink"};
+//        int[] to = {R.id.noteTextView, R.id.storeInfoTextView, R.id.drinkTextView};
+//
+//        SimpleAdapter adapter = new SimpleAdapter(this, mapList, R.layout.listview_order_item, from, to);
+//
+//        listView.setAdapter(adapter);
+
+        OrderAdapter adapter = new OrderAdapter(this, data);
         listView.setAdapter(adapter);
     }
 
@@ -72,12 +102,17 @@ public class MainActivity extends AppCompatActivity {
         if (text.equals(""))
             text = "Name";
 
-        text += " Order: " + drink;
-        textView.setText(text);
+        String result = text + " Order: " + drink;
+        textView.setText(result);
 
         editText.setText("");
 
-        data.add(text);
+        Order order = new Order();
+        order.note = text;
+        order.drink = drink;
+        order.storeInfo = (String) spinner.getSelectedItem();
+
+        data.add(order);
         setupListView();
     }
 }
