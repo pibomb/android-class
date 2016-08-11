@@ -44,13 +44,12 @@ public class DrinkAdapter extends BaseAdapter {
 
         if(convertView == null) {
             convertView = layoutInflater.inflate(R.layout.listview_drink_item, null);
+            holder = new Holder();
 
-            ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
-            TextView drinkName = (TextView) convertView.findViewById(R.id.drinkName);
-            TextView mPriceTextView = (TextView) convertView.findViewById(R.id.mPriceTextView);
-            TextView lPriceTextView = (TextView) convertView.findViewById(R.id.lPriceTextView);
-
-            holder = new Holder(imageView, drinkName, mPriceTextView, lPriceTextView);
+            holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
+            holder.drinkName = (TextView) convertView.findViewById(R.id.drinkName);
+            holder.mPriceTextView = (TextView) convertView.findViewById(R.id.mPriceTextView);
+            holder.lPriceTextView = (TextView) convertView.findViewById(R.id.lPriceTextView);
 
             convertView.setTag(holder);
         } else {
@@ -60,8 +59,8 @@ public class DrinkAdapter extends BaseAdapter {
         Drink drink = drinks.get(position);
         holder.imageView.setImageResource(drink.imageId);
         holder.drinkName.setText(drink.name);
-        holder.mPriceTextView.setText(drink.mPrice);
-        holder.lPriceTextView.setText(drink.lPrice);
+        holder.mPriceTextView.setText(String.valueOf(drink.mPrice));
+        holder.lPriceTextView.setText(String.valueOf(drink.lPrice));
 
         return convertView;
     }
@@ -69,12 +68,5 @@ public class DrinkAdapter extends BaseAdapter {
     class Holder {
         ImageView imageView;
         TextView drinkName, mPriceTextView, lPriceTextView;
-
-        Holder(ImageView imageView, TextView drinkName, TextView mPriceTextView, TextView lPriceTextView) {
-            this.imageView = imageView;
-            this.drinkName = drinkName;
-            this.mPriceTextView = mPriceTextView;
-            this.lPriceTextView = lPriceTextView;
-        }
     }
 }

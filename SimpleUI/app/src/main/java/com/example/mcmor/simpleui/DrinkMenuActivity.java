@@ -49,7 +49,8 @@ public class DrinkMenuActivity extends AppCompatActivity {
     }
 
     private void setupDrinkMenu() {
-
+        DrinkAdapter adapter = new DrinkAdapter(this, drinkList);
+        drinkMenuListView.setAdapter(adapter);
     }
 
     @Override
