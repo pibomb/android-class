@@ -1,6 +1,10 @@
 package com.example.mcmor.simpleui;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,11 +13,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
-public class DrinkMenuActivity extends AppCompatActivity {
+public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDialog.OnFragmentInteractionListener {
 
     ListView drinkMenuListView;
     TextView totalTextView;
@@ -25,6 +32,11 @@ public class DrinkMenuActivity extends AppCompatActivity {
 
     int total = 0;
     List<Drink> drinkList = new ArrayList<Drink>();
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,18 +52,22 @@ public class DrinkMenuActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Drink drink = (Drink) parent.getAdapter().getItem(position);
-                total += drink.mPrice;
-                totalTextView.setText(String.valueOf(total));
+//                total += drink.mPrice;
+//                totalTextView.setText(String.valueOf(total));
+                showDrinkOrderDialog(drink);
             }
         });
 
         setupDrinkMenu();
 
         Log.d("DEBUG", "DrinkMenuActivity OnCreate");
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void setData() {
-        for(int i = 0; i < names.length; i++) {
+        for (int i = 0; i < names.length; i++) {
             Drink drink = new Drink();
             drink.name = names[i];
             drink.lPrice = lPrices[i];
@@ -74,10 +90,44 @@ public class DrinkMenuActivity extends AppCompatActivity {
         finish();
     }
 
+    public void cancel(View view) {
+        Intent intent = new Intent();
+
+        setResult(RESULT_CANCELED, intent);
+        finish();
+    }
+
+    private void showDrinkOrderDialog(Drink drink) {
+        FragmentManager fragmentManager = getFragmentManager();
+
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+
+        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance("", "");
+
+        ft.replace(R.id.root, dialog);
+        ft.commit();
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
         Log.d("DEBUG", "DrinkMenuActivity OnStart");
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "DrinkMenu Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.mcmor.simpleui/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
     }
 
     @Override
@@ -95,7 +145,23 @@ public class DrinkMenuActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "DrinkMenu Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.example.mcmor.simpleui/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
         Log.d("DEBUG", "DrinkMenuActivity OnStop");
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.disconnect();
     }
 
     @Override
@@ -108,5 +174,10 @@ public class DrinkMenuActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         Log.d("DEBUG", "DrinkMenuActivity OnRestart");
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
