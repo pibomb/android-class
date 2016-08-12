@@ -99,13 +99,13 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     private void showDrinkOrderDialog(Drink drink) {
         FragmentManager fragmentManager = getFragmentManager();
-
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
         DrinkOrderDialog dialog = DrinkOrderDialog.newInstance("", "");
 
-        ft.replace(R.id.root, dialog);
-        ft.commit();
+//        ft.replace(R.id.root, dialog);
+//        ft.commit();
+        dialog.show(ft, "DrinkOrderDialog"); 
     }
 
     @Override
