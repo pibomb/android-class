@@ -17,7 +17,7 @@ public class OrderAdapter extends BaseAdapter {
     List<Order> orders;
     LayoutInflater layoutInflater;
 
-    public OrderAdapter(Context context, List<Order> orderList) {
+    public OrderAdapter(Context context, List<Order> orderList){
         this.orders = orderList;
         this.layoutInflater = LayoutInflater.from(context);
     }
@@ -42,12 +42,13 @@ public class OrderAdapter extends BaseAdapter {
 
         Holder holder;
 
-        if(convertView == null) {
+        if(convertView == null)
+        {
             convertView = layoutInflater.inflate(R.layout.listview_order_item, null);
 
-            TextView noteTextView = (TextView) convertView.findViewById(R.id.noteTextView);
-            TextView storeInfoTextView = (TextView) convertView.findViewById(R.id.storeInfoTextView);
-            TextView drinkTextView = (TextView) convertView.findViewById((R.id.drinkTextView));
+            TextView noteTextView = (TextView)convertView.findViewById(R.id.noteTextView);
+            TextView storeInfoTextView = (TextView)convertView.findViewById(R.id.storeInfoTextView);
+            TextView drinkTextView = (TextView)convertView.findViewById(R.id.drinkTextView);
 
             holder = new Holder();
 
@@ -56,14 +57,17 @@ public class OrderAdapter extends BaseAdapter {
             holder.drinkTextView = drinkTextView;
 
             convertView.setTag(holder);
-        } else {
-            holder = (Holder) convertView.getTag();
+        }
+        else
+        {
+            holder = (Holder)convertView.getTag();
         }
 
         Order order = orders.get(position);
         holder.noteTextView.setText(order.note);
         holder.storeInfoTextView.setText(order.storeInfo);
-        holder.drinkTextView.setText(order.drink);
+//        TODO
+//        holder.drinkTextView.setText(String.valueOf(order.getTotal()));
 
         return convertView;
     }

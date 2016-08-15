@@ -1,8 +1,12 @@
 package com.example.mcmor.simpleui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,9 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
     String drink = "Black Tea";
 
+    ArrayList<DrinkOrder> drinkOrderList = new ArrayList<>();
     List<Order> data = new ArrayList<Order>();
 
-    @Override
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -44,6 +51,28 @@ public class MainActivity extends AppCompatActivity {
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         listView = (ListView) findViewById(R.id.listView);
         spinner = (Spinner) findViewById(R.id.spinner);
+
+        sharedPreferences = getSharedPreferences("UIState", MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        editText.setText(sharedPreferences.getString("editText", ""));
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                editor.putString("editText", editText.getText().toString());
+                editor.apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -115,15 +144,18 @@ public class MainActivity extends AppCompatActivity {
 
         Order order = new Order();
         order.note = text;
-        order.drink = drink;
+        order.drinkOrderList = drinkOrderList;
         order.storeInfo = (String) spinner.getSelectedItem();
 
         data.add(order);
+
+        drinkOrderList = new ArrayList<>();
         setupListView();
     }
 
     public void goToMenu(View view) {
         Intent intent = new Intent();
+        intent.putExtra("result", drinkOrderList);
         intent.setClass(this, DrinkMenuActivity.class);
         startActivityForResult(intent, REQUEST_CODE_DRINK_MENU_ACTIVITY);
     }
@@ -134,8 +166,9 @@ public class MainActivity extends AppCompatActivity {
 
         if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY) {
             if(resultCode == RESULT_OK) {
-                String result = data.getStringExtra("result");
-                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+                drinkOrderList = data.getParcelableArrayListExtra("result");
+//                String result = data.getStringExtra("result");
+//                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
             } else if(resultCode == RESULT_CANCELED) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             }
