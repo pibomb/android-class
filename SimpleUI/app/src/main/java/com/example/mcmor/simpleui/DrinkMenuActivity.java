@@ -99,10 +99,21 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     }
 
     private void showDrinkOrderDialog(Drink drink) {
+        DrinkOrder order = null;
+        for(DrinkOrder drinkOrder : drinkOrderList) {
+            if(drinkOrder.drink.name.equals(drink.name)) {
+                order = drinkOrder;
+                break;
+            }
+        }
+
+        if(order == null)
+            order = new DrinkOrder(drink);
+
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
 
-        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance(drink);
+        DrinkOrderDialog dialog = DrinkOrderDialog.newInstance(order);
 
 //        ft.replace(R.id.root, dialog);
 //        ft.commit();
@@ -179,13 +190,19 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     @Override
     public void onDrinkOrderResult(DrinkOrder drinkOrder) {
-        for(DrinkOrder order : drinkOrderList) {
-            if(order.drink.name.equals(drinkOrder.drink.name)) {
-                
+        boolean flag = false;
+
+        for(int i = 0; i < drinkOrderList.size(); i++) {
+            if(drinkOrderList.get(i).drink.name.equals(drinkOrder.drink.name)) {
+                drinkOrderList.set(i, drinkOrder);
+                flag = true;
+                break;
             }
         }
 
-        drinkOrderList.add(drinkOrder);
+        if(!flag)
+            drinkOrderList.add(drinkOrder);
+
         updateTotalTextView();
     }
 
