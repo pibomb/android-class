@@ -1,6 +1,5 @@
 package com.example.mcmor.simpleui;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -32,6 +31,8 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     int total = 0;
     List<Drink> drinkList = new ArrayList<Drink>();
+    List<DrinkOrder> drinkOrderList = new ArrayList<>();
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -177,7 +178,26 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onDrinkOrderResult(DrinkOrder drinkOrder) {
+        for(DrinkOrder order : drinkOrderList) {
+            if(order.drink.name.equals(drinkOrder.drink.name)) {
+                
+            }
+        }
 
+        drinkOrderList.add(drinkOrder);
+        updateTotalTextView();
+    }
+
+    private void updateTotalTextView() {
+        Log.d("DEBUG", "updateTotalTextView()");
+
+        int total = 0;
+        for(DrinkOrder drinkOrder : drinkOrderList) {
+            total += drinkOrder.lNumber * drinkOrder.drink.lPrice;
+            total += drinkOrder.mNumber * drinkOrder.drink.mPrice;
+        }
+
+        totalTextView.setText(String.valueOf(total));
     }
 }
