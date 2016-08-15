@@ -90,7 +90,7 @@ public class DrinkMenuActivity extends AppCompatActivity implements DrinkOrderDi
 
     public void done(View view) {
         Intent intent = new Intent();
-        intent.putExtra("result", String.valueOf(total));
+        intent.putExtra("result", drinkOrderList);
 
         setResult(RESULT_OK, intent);
         finish();

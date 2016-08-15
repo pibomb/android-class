@@ -66,8 +66,7 @@ public class OrderAdapter extends BaseAdapter {
         Order order = orders.get(position);
         holder.noteTextView.setText(order.note);
         holder.storeInfoTextView.setText(order.storeInfo);
-//        TODO
-//        holder.drinkTextView.setText(String.valueOf(order.getTotal()));
+        holder.drinkTextView.setText(String.valueOf(order.getTotal()));
 
         return convertView;
     }
