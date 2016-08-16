@@ -75,7 +75,6 @@ public class DrinkOrderDialog extends DialogFragment {
 //        return inflater.inflate(R.layout.fragment_drink_order_dialog, container, false);
 //    }
 
-
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         if(getArguments() != null) {
