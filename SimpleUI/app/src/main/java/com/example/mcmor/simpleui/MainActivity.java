@@ -93,11 +93,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Order order = (Order) parent.getAdapter().getItem(position);
-                Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();
             }
         });
 
-        setupOrderHistory();
+//        setupOrderHistory();
 
         setupListView();
         setupSpinner();
@@ -127,19 +127,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupOrderHistory() {
-        String orderDatas = Utils.readFile(this, "history");
-        String[] orderDataArray = orderDatas.split("\n");
-        Gson gson = new Gson();
-        for(String orderData : orderDataArray) {
-            try {
-                Order order = gson.fromJson(orderData, Order.class);
-                if (order != null) {
-                    orderList.add(order);
+        Order.getQuery().findInBackground(new FindCallback<Order>() {
+            @Override
+            public void done(List<Order> objects, ParseException e) {
+                if(e == null) {
+                    orderList = objects;
+                    setupListView();
                 }
-            } catch(JsonSyntaxException e) {
-                e.printStackTrace();
             }
-        }
+        });
+//        String orderDatas = Utils.readFile(this, "history");
+//        String[] orderDataArray = orderDatas.split("\n");
+//        Gson gson = new Gson();
+//        for(String orderData : orderDataArray) {
+//            try {
+//                Order order = gson.fromJson(orderData, Order.class);
+//                if (order != null) {
+//                    orderList.add(order);
+//                }
+//            } catch(JsonSyntaxException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     private void setupListView() {
@@ -200,15 +209,24 @@ public class MainActivity extends AppCompatActivity {
         editText.setText("");
 
         Order order = new Order();
-        order.note = text;
-        order.drinkOrderList = drinkOrderList;
-        order.storeInfo = (String) spinner.getSelectedItem();
+
+        order.setNote(text);
+        order.setDrinkOrderList(drinkOrderList);
+        order.setStoreInfo((String) spinner.getSelectedItem());
 
         orderList.add(order);
 
-        Gson gson = new Gson();
-        String orderData = gson.toJson(order);
-        Utils.writeFile(this, "history", orderData + '\n');
+//        Gson gson = new Gson();
+//        String orderData = gson.toJson(order);
+//        Utils.writeFile(this, "history", orderData + '\n');
+        order.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if(e != null) {
+                    Toast.makeText(MainActivity.this, "Order Failed", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
         drinkOrderList = new ArrayList<>();
         setupListView();

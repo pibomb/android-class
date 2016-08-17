@@ -4,7 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.ParseClassName;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 /**
  * Created by mcmor on 2016-08-10.
@@ -14,7 +17,7 @@ public class Drink extends ParseObject implements Parcelable {
     static final String NAME_COL = "name";
     static final String MPRICE_COL = "mPrice";
     static final String LPRICE_COL = "lPrice";
-    int imageId;
+    static final String IMAGE_COL = "image";
 
     @Override
     public int describeContents() {
@@ -23,10 +26,16 @@ public class Drink extends ParseObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.getName());
-        dest.writeInt(this.getmPrice());
-        dest.writeInt(this.getlPrice());
-        dest.writeInt(this.imageId);
+        if(getObjectId() == null) {
+            dest.writeInt(0);
+            dest.writeString(this.getName());
+            dest.writeInt(this.getmPrice());
+            dest.writeInt(this.getlPrice());
+        } else {
+            dest.writeInt(1);
+            dest.writeString(getObjectId());
+        }
+
     }
 
     public Drink() {
@@ -36,13 +45,18 @@ public class Drink extends ParseObject implements Parcelable {
         this.setName(in.readString());
         this.setmPrice(in.readInt());
         this.setlPrice(in.readInt());
-        this.imageId = in.readInt();
     }
 
     public static final Parcelable.Creator<Drink> CREATOR = new Parcelable.Creator<Drink>() {
         @Override
         public Drink createFromParcel(Parcel source) {
-            return new Drink(source);
+            int isFromRemote = source.readInt();
+            if(isFromRemote == 0) {
+                return new Drink(source);
+            } else {
+                String objectId = source.readString();
+                return getDrinkFromCache(objectId);
+            }
         }
 
         @Override
@@ -73,5 +87,23 @@ public class Drink extends ParseObject implements Parcelable {
 
     public void setlPrice(int lPrice) {
         this.put(LPRICE_COL, lPrice);
+    }
+
+    public ParseFile getImage() {
+        return getParseFile(IMAGE_COL);
+    }
+
+    public static ParseQuery<Drink> getQuery() {
+        return ParseQuery.getQuery(Drink.class);
+    }
+
+    public static Drink getDrinkFromCache(String objectId) {
+        try {
+            Drink drink = getQuery().setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK).get(objectId);
+            return drink;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return Drink.createWithoutData(Drink.class, objectId);
     }
 }
