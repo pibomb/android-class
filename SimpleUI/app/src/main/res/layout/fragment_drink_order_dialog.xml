@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.mcmor.simpleui.DrinkOrderDialog">
+    tools:context="com.example.user.simpleui.DrinkOrderDialog">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -10,14 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Medium:"
+        android:text="Medium: "
         android:id="@+id/textView5"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="60dp"
-        android:layout_marginLeft="10dp"
-        android:textSize="16dp" />
+        android:layout_marginLeft="10dp" />
 
     <NumberPicker
         android:layout_width="wrap_content"
@@ -32,13 +31,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Large:"
+        android:text="Large :"
         android:id="@+id/textView6"
         android:layout_alignBottom="@+id/textView5"
         android:layout_toRightOf="@+id/mNumberPicker"
         android:layout_toEndOf="@+id/mNumberPicker"
-        android:layout_marginLeft="10dp"
-        android:textSize="16dp" />
+        android:layout_marginLeft="10dp" />
 
     <NumberPicker
         android:layout_width="wrap_content"
@@ -72,21 +70,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="REGULAR"
-            android:id="@+id/radioButton"
+            android:id="@+id/radioButton2"
+            android:layout_gravity="center_horizontal"
             android:checked="true" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="EASY ICE"
-            android:id="@+id/radioButton2"
+            android:id="@+id/radioButton3"
+            android:layout_gravity="right"
             android:checked="false" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ICE FREE"
-            android:id="@+id/radioButton3"
+            android:id="@+id/radioButton"
             android:checked="false" />
     </RadioGroup>
 
@@ -114,6 +114,7 @@
             android:layout_height="wrap_content"
             android:text="REGULAR"
             android:id="@+id/radioButton4"
+            android:layout_gravity="center_horizontal"
             android:checked="true" />
 
         <RadioButton
@@ -121,6 +122,7 @@
             android:layout_height="wrap_content"
             android:text="HALF"
             android:id="@+id/radioButton5"
+            android:layout_gravity="right"
             android:checked="false" />
 
         <RadioButton
@@ -147,7 +149,5 @@
         android:id="@+id/noteEditText"
         android:layout_below="@+id/textView9"
         android:layout_alignLeft="@+id/textView9"
-        android:layout_alignStart="@+id/textView9"
-        android:layout_marginRight="10dp" />
-
+        android:layout_alignStart="@+id/textView9" />
 </RelativeLayout>

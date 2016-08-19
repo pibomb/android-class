@@ -1,13 +1,14 @@
-package com.example.mcmor.simpleui;
+package com.example.user.simpleui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.NumberPicker;
@@ -31,9 +32,10 @@ public class DrinkOrderDialog extends DialogFragment {
 
     NumberPicker mNumberPicker;
     NumberPicker lNumberPicker;
-
-    RadioGroup iceRadioGroup, sugarRadioGroup;
+    RadioGroup iceRadioGroup;
+    RadioGroup sugarRadioGroup;
     EditText noteEditText;
+
 
     private DrinkOrder drinkOrder;
 
@@ -47,14 +49,15 @@ public class DrinkOrderDialog extends DialogFragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param drinkOrder
      * @return A new instance of fragment DrinkOrderDialog.
      */
     // TODO: Rename and change types and number of parameters
     public static DrinkOrderDialog newInstance(DrinkOrder drinkOrder) {
         DrinkOrderDialog fragment = new DrinkOrderDialog();
         Bundle args = new Bundle();
+
         args.putParcelable(ARG_PARAM1, drinkOrder);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,15 +78,19 @@ public class DrinkOrderDialog extends DialogFragment {
 //        return inflater.inflate(R.layout.fragment_drink_order_dialog, container, false);
 //    }
 
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if(getArguments() != null) {
+
+        if(getArguments() != null)
+        {
             this.drinkOrder = getArguments().getParcelable(ARG_PARAM1);
         }
 
         View contentView = getActivity().getLayoutInflater().inflate(R.layout.fragment_drink_order_dialog, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
         builder.setView(contentView)
                 .setTitle(drinkOrder.getDrink().getName())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -95,7 +102,8 @@ public class DrinkOrderDialog extends DialogFragment {
                         drinkOrder.setSugar(getSelectedTextFromRadioGroup(sugarRadioGroup));
                         drinkOrder.setNote(noteEditText.getText().toString());
 
-                        if(mListener != null) {
+                        if(mListener != null)
+                        {
                             mListener.onDrinkOrderResult(drinkOrder);
                         }
                     }
@@ -106,11 +114,13 @@ public class DrinkOrderDialog extends DialogFragment {
 
                     }
                 });
-        mNumberPicker = (NumberPicker) contentView.findViewById(R.id.mNumberPicker);
-        lNumberPicker = (NumberPicker) contentView.findViewById(R.id.lNumberPicker);
-        iceRadioGroup = (RadioGroup) contentView.findViewById(R.id.iceRadioGroup);
-        sugarRadioGroup = (RadioGroup) contentView.findViewById(R.id.sugarRadioGroup);
-        noteEditText = (EditText) contentView.findViewById(R.id.noteEditText);
+
+        mNumberPicker = (NumberPicker)contentView.findViewById(R.id.mNumberPicker);
+        lNumberPicker = (NumberPicker)contentView.findViewById(R.id.lNumberPicker);
+        iceRadioGroup = (RadioGroup)contentView.findViewById(R.id.iceRadioGroup);
+        sugarRadioGroup = (RadioGroup)contentView.findViewById(R.id.sugarRadioGroup);
+        noteEditText = (EditText)contentView.findViewById(R.id.noteEditText);
+
 
         mNumberPicker.setMaxValue(100);
         mNumberPicker.setMinValue(0);
@@ -127,33 +137,31 @@ public class DrinkOrderDialog extends DialogFragment {
         return builder.create();
     }
 
-    private String getSelectedTextFromRadioGroup(RadioGroup radioGroup) {
-        int id =  radioGroup.getCheckedRadioButtonId();
-        RadioButton radioButton = (RadioButton) radioGroup.findViewById(id);
-
+    private String getSelectedTextFromRadioGroup(RadioGroup radioGroup)
+    {
+        int id = radioGroup.getCheckedRadioButtonId();
+        RadioButton radioButton = (RadioButton)radioGroup.findViewById(id);
         return radioButton.getText().toString();
     }
 
-    private void setSelectedTextInRadioGroup(String selectedText, RadioGroup radioGroup) {
+    private void setSelectedTextInRadioGroup(String selectedText, RadioGroup radioGroup)
+    {
         int count = radioGroup.getChildCount();
-        for(int i = 0; i < count; i++) {
+        for(int i=0; i <count;i++)
+        {
             View view = radioGroup.getChildAt(i);
-            if(view instanceof RadioButton) {
-                RadioButton radioButton = (RadioButton) view;
-
-                radioButton.setChecked(radioButton.getText().toString().equals(selectedText));
+            if(view instanceof RadioButton)
+            {
+                RadioButton radioButton = (RadioButton)view;
+                if(radioButton.getText().toString().equals(selectedText))
+                {
+                    radioButton.setChecked(true);
+                }
+                else
+                {
+                    radioButton.setChecked(false);
+                }
             }
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) activity;
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
         }
     }
 
@@ -164,6 +172,17 @@ public class DrinkOrderDialog extends DialogFragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (activity instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) activity;
+        } else {
+            throw new RuntimeException(activity.toString()
                     + " must implement OnFragmentInteractionListener");
         }
     }

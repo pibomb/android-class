@@ -1,4 +1,4 @@
-package com.example.mcmor.simpleui;
+package com.example.user.simpleui;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.parse.FindCallback;
+import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -41,20 +42,21 @@ public class MainActivity extends AppCompatActivity {
     String drink = "Black Tea";
 
     ArrayList<DrinkOrder> drinkOrderList = new ArrayList<>();
-    List<Order> orderList = new ArrayList<Order>();
+    List<Order> orderList = new ArrayList<>();
 
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = (TextView) findViewById(R.id.textView);
-        editText = (EditText) findViewById(R.id.editText);
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        listView = (ListView) findViewById(R.id.listView);
-        spinner = (Spinner) findViewById(R.id.spinner);
+        textView = (TextView)findViewById(R.id.textView);
+        editText = (EditText)findViewById(R.id.editText);
+        radioGroup = (RadioGroup)findViewById(R.id.radioGroup);
+        listView = (ListView)findViewById(R.id.listView);
+        spinner = (Spinner)findViewById(R.id.spinner);
 
         sharedPreferences = getSharedPreferences("UIState", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -93,44 +95,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Order order = (Order) parent.getAdapter().getItem(position);
+                goToDetail(order);
 //                Toast.makeText(MainActivity.this, order.note, Toast.LENGTH_LONG).show();
             }
         });
 
-//        setupOrderHistory();
-
+        setupOrderHistory();
         setupListView();
         setupSpinner();
-
-//        ParseObject testObject = new ParseObject("TestObject");
-//        testObject.put("foo", "bar");
-//        testObject.saveInBackground(new SaveCallback() {
-//            @Override
-//            public void done(ParseException e) {
-//                if(e  == null) {
-//                    Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//        });
-//
-//        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("TestObject");
-//        query.findInBackground(new FindCallback<ParseObject>() {
-//            @Override
-//            public void done(List<ParseObject> objects, ParseException e) {
-//                if(e == null) {
-//                    Toast.makeText(MainActivity.this, objects.get(0).getString("foo"), Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
 
         Log.d("DEBUG", "MainActivity OnCreate");
     }
 
-    private void setupOrderHistory() {
-        Order.getQuery().findInBackground(new FindCallback<Order>() {
+    private void setupOrderHistory()
+    {
+        Order.getOrdersFromLocalThenRemote(new FindCallback<Order>() {
             @Override
             public void done(List<Order> objects, ParseException e) {
-                if(e == null) {
+                if (e == null) {
                     orderList = objects;
                     setupListView();
                 }
@@ -139,24 +121,31 @@ public class MainActivity extends AppCompatActivity {
 //        String orderDatas = Utils.readFile(this, "history");
 //        String[] orderDataArray = orderDatas.split("\n");
 //        Gson gson = new Gson();
-//        for(String orderData : orderDataArray) {
+//        for(String orderData : orderDataArray)
+//        {
+//
 //            try {
 //                Order order = gson.fromJson(orderData, Order.class);
-//                if (order != null) {
+//                if(order != null)
+//                {
 //                    orderList.add(order);
 //                }
-//            } catch(JsonSyntaxException e) {
+//            }
+//            catch (JsonSyntaxException e)
+//            {
 //                e.printStackTrace();
 //            }
 //        }
     }
 
-    private void setupListView() {
-//        String[] orderList = new String[] {"1", "2", "3", "4", "5", "6", "7", "8"};
+    private void setupListView()
+    {
+//        String[] orderList = new String[]{"1","2","3","4","5","6","7","8"};
 
 //        List<Map<String, String>> mapList = new ArrayList<>();
 //
-//        for(Order order : orderList) {
+//        for(Order order : orderList)
+//        {
 //            Map<String, String> item = new HashMap<>();
 //
 //            item.put("note", order.note);
@@ -170,40 +159,23 @@ public class MainActivity extends AppCompatActivity {
 //        int[] to = {R.id.noteTextView, R.id.storeInfoTextView, R.id.drinkTextView};
 //
 //        SimpleAdapter adapter = new SimpleAdapter(this, mapList, R.layout.listview_order_item, from, to);
-//
-//        listView.setAdapter(adapter);
 
         OrderAdapter adapter = new OrderAdapter(this, orderList);
         listView.setAdapter(adapter);
     }
 
-    private void setupSpinner() {
+    private void setupSpinner()
+    {
         String[] storeInfo = getResources().getStringArray(R.array.storeInfo);
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, storeInfo);
         spinner.setAdapter(adapter);
-
-        spinner.setSelection(sharedPreferences.getInt("spinnerValue", 0));
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                editor.putInt("spinnerValue", position);
-                editor.apply();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
     }
 
-    public void click(View view) {
+    public void click(View view)
+    {
         String text = editText.getText().toString();
-
-        if (text.equals(""))
-            text = "Name";
-
-        String result = text + " Order: " + drink;
+        String result = text + "  Order: " + drink;
         textView.setText(result);
 
         editText.setText("");
@@ -212,44 +184,51 @@ public class MainActivity extends AppCompatActivity {
 
         order.setNote(text);
         order.setDrinkOrderList(drinkOrderList);
-        order.setStoreInfo((String) spinner.getSelectedItem());
+        order.setStoreInfo((String)spinner.getSelectedItem());
 
         orderList.add(order);
 
 //        Gson gson = new Gson();
 //        String orderData = gson.toJson(order);
 //        Utils.writeFile(this, "history", orderData + '\n');
-        order.saveInBackground(new SaveCallback() {
+        order.saveEventually(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                if(e != null) {
+                if(e!=null)
                     Toast.makeText(MainActivity.this, "Order Failed", Toast.LENGTH_LONG).show();
-                }
             }
         });
+        order.pinInBackground("Order");
 
         drinkOrderList = new ArrayList<>();
         setupListView();
     }
 
-    public void goToMenu(View view) {
+    public void goToMenu(View view)
+    {
         Intent intent = new Intent();
         intent.putExtra("result", drinkOrderList);
         intent.setClass(this, DrinkMenuActivity.class);
         startActivityForResult(intent, REQUEST_CODE_DRINK_MENU_ACTIVITY);
     }
 
+    public void goToDetail(Order order)
+    {
+        Intent intent = new Intent();
+        intent.putExtra("order", order);
+        intent.setClass(this, OrderDetailActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY) {
-            if(resultCode == RESULT_OK) {
+        if(requestCode == REQUEST_CODE_DRINK_MENU_ACTIVITY)
+        {
+            if(resultCode == RESULT_OK)
+            {
                 drinkOrderList = data.getParcelableArrayListExtra("result");
-//                String result = orderList.getStringExtra("result");
 //                Toast.makeText(this, result, Toast.LENGTH_LONG).show();
-            } else if(resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             }
         }
     }

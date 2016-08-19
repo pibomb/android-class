@@ -1,4 +1,4 @@
-package com.example.mcmor.simpleui;
+package com.example.user.simpleui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Created by mcmor on 2016-08-09.
+ * Created by user on 2016/8/10.
  */
 public class OrderAdapter extends BaseAdapter {
 
@@ -71,7 +71,9 @@ public class OrderAdapter extends BaseAdapter {
         return convertView;
     }
 
-    class Holder {
-        TextView noteTextView, storeInfoTextView, drinkTextView;
+    class Holder{
+        TextView noteTextView;
+        TextView storeInfoTextView;
+        TextView drinkTextView;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.mcmor.simpleui;
+package com.example.user.simpleui;
 
 import org.junit.Test;
 

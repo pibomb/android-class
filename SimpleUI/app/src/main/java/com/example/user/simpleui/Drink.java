@@ -1,16 +1,21 @@
-package com.example.mcmor.simpleui;
+package com.example.user.simpleui;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.util.List;
+
 /**
- * Created by mcmor on 2016-08-10.
+ * Created by user on 2016/8/11.
  */
 @ParseClassName("Drink")
 public class Drink extends ParseObject implements Parcelable {
@@ -26,12 +31,15 @@ public class Drink extends ParseObject implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if(getObjectId() == null) {
+        if(getObjectId() == null)
+        {
             dest.writeInt(0);
             dest.writeString(this.getName());
             dest.writeInt(this.getmPrice());
             dest.writeInt(this.getlPrice());
-        } else {
+        }
+        else
+        {
             dest.writeInt(1);
             dest.writeString(getObjectId());
         }
@@ -39,9 +47,11 @@ public class Drink extends ParseObject implements Parcelable {
     }
 
     public Drink() {
+        super();
     }
 
     protected Drink(Parcel in) {
+        super();
         this.setName(in.readString());
         this.setmPrice(in.readInt());
         this.setlPrice(in.readInt());
@@ -51,9 +61,12 @@ public class Drink extends ParseObject implements Parcelable {
         @Override
         public Drink createFromParcel(Parcel source) {
             int isFromRemote = source.readInt();
-            if(isFromRemote == 0) {
+            if(isFromRemote == 0)
+            {
                 return new Drink(source);
-            } else {
+            }
+            else
+            {
                 String objectId = source.readString();
                 return getDrinkFromCache(objectId);
             }
@@ -78,32 +91,54 @@ public class Drink extends ParseObject implements Parcelable {
     }
 
     public void setmPrice(int mPrice) {
-        this.put(MPRICE_COL, mPrice);
+        this.put(MPRICE_COL,mPrice);
     }
 
     public int getlPrice() {
-        return getInt(MPRICE_COL);
+        return getInt(LPRICE_COL);
     }
 
     public void setlPrice(int lPrice) {
         this.put(LPRICE_COL, lPrice);
     }
 
-    public ParseFile getImage() {
-        return getParseFile(IMAGE_COL);
-    }
+    public ParseFile getImage(){return getParseFile(IMAGE_COL);}
 
-    public static ParseQuery<Drink> getQuery() {
+    public static ParseQuery<Drink> getQuery()
+    {
         return ParseQuery.getQuery(Drink.class);
     }
 
-    public static Drink getDrinkFromCache(String objectId) {
+    public static Drink getDrinkFromCache(String objectId)
+    {
         try {
-            Drink drink = getQuery().setCachePolicy(ParseQuery.CachePolicy.CACHE_ELSE_NETWORK).get(objectId);
+            Drink drink = getQuery().fromLocalDatastore().get(objectId);
             return drink;
         } catch (ParseException e) {
             e.printStackTrace();
         }
         return Drink.createWithoutData(Drink.class, objectId);
     }
+
+    public static void getDrinksFromLocalThenRemote(final FindCallback<Drink> callback)
+    {
+        getQuery().fromLocalDatastore().findInBackground(callback);
+        getQuery().findInBackground(new FindCallback<Drink>() {
+            @Override
+            public void done(final List<Drink> list, ParseException e) {
+                if(e==null)
+                {
+                    unpinAllInBackground("Drink", new DeleteCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            pinAllInBackground("Drink", list);
+                        }
+                    });
+                }
+                callback.done(list, e);
+
+            }
+        });
+    }
+
 }
